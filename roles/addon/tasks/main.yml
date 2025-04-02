@@ -1,0 +1,10 @@
+# - name: Correect iptables FORWARD chain policy
+#   ansible.builtin.lineinfile:
+#     path: /etc/sysconfig/iptables
+#     regexp: ":FORWARD \\w+ \\[\\d*:\\d*\\]"
+#     line: ":FORWARD DROP [0:0]"
+# - name: Remove REJECT all line from iptables FORWARD chain
+#   ansible.builtin.lineinfile:
+#     path: /etc/sysconfig/iptables
+#     regexp: "-A FORWARD -j REJECT --reject-with icmp-host-prohibite"
+#     state: absent

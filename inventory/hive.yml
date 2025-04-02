@@ -1,18 +1,19 @@
-name: tmpl
+name: cloudnext
 plugin: hive_inventory
 stages:
   private:
-    provider: vagrant
+    provider: gcp
     cidr: 192.168.0.0/16
     internal_cidr: 172.31.252.0/22
     separate_repository: false
     number_of_hosts: 1
     cpus: 2
-    memory_size: 4096
-    repository_memory_size: 4096
     disk_size: 20
     repository_disk_size: 20
     mirrored_disk_size: 20
+    region: asia-northeast1
+    instance_type: n1-standard-2
+    repository_instance_type: n1-standard-2
   staging:
     provider: gcp
     cidr: 192.168.0.0/16

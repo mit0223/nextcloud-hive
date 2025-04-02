@@ -1,3 +1,3 @@
 ---
-service_name: redmine
-service_port: 3000
+service_name: nextcloud
+service_port: 80

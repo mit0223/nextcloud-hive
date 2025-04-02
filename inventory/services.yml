@@ -2,12 +2,13 @@
 plugin: hive_services
 services:
   nginx:
-    image: nginx
+    image:
+      from: nginx
+      roles:
+        - python-aptk
+        - nginx-init
     ports:
       - 8080:80
-    initialize_roles:
-      - python-aptk
-      - nginx-init
     volumes:
       - source: nginx_conf
         target: /etc/nginx/conf.d
@@ -16,10 +17,16 @@ services:
           fstype: xfs
           size: 500M
   db:
-    image: mysql:8.0
+    image: mariadb:10.6
+    command:
+      - "--transaction-isolation=READ-COMMITTED"
+      - "--log-bin=binlog"
+      - "--binlog-format=ROW"
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: redmine
+      - MYSQL_ROOT_PASSWORD=mariadbXXX
+      - MYSQL_PASSWORD=nextcloudXXX
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
     volumes:
       - source: mysql_data
         target: /var/lib/mysql
@@ -28,26 +35,27 @@ services:
           fstype: xfs
           size: 3G
     backup_scripts:
-      - name: redmine_db
+      - name: nextcloud-db
         backup_command: mysqldump -u root -pexample redmine > /root/today.sql
         restore_command: mysql -u root -pexample redmine < /root/today.sql
         backup_file: /root/today.sql
         restore_file: /root/today.sql
         ext: sql
         cleanup_days_before: 3
-  redmine:
-    image: redmine
+  nextcloud:
+    image: nextcloud
     restart_config:
       condition: "on-failure"
       delay: 5s
-    environment:
-      REDMINE_DB_MYSQL: db
-      REDMINE_DB_PASSWORD: example
-      REDMINE_SECRET_KEY_BASE: supersecretkey
     volumes:
-      - source: redmine_files
-        target: /usr/src/redmine/files
+      - source: nextcloud
+        target: /var/www/html
         type: volume
         drbd:
           fstype: xfs
           size: 1G
+    environment:
+      - MYSQL_PASSWORD=nextcloudXXX
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db

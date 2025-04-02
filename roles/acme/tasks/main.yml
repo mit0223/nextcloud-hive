@@ -1,0 +1,22 @@
+- name: Install ansible-core
+  ansible.builtin.pip:
+    name:
+      - ansible-core
+    virtualenv: /root/consul
+  # environment:
+  #   LANG: "en_US.UTF-8"
+- name: Ensure acme directory
+  ansible.builtin.file:
+    path: /var/acme/data
+    mode: "0777"
+    state: directory
+- name: Put vars_file for get/renew acme certificate
+  ansible.builtin.template:
+    dest: /var/acme/acme-vars.yml
+    src: acme-vars.yml.j2
+    mode: "0644"
+- name: Put ansible inventory
+  ansible.builtin.template:
+    dest: /var/acme/hosts
+    src: hosts.j2
+    mode: "0644"
